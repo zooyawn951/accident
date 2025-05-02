@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>재해 유형</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 50px auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+  
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  
+    .page {
+      display: none;
+    }
+  
+    .active {
+      display: block;
+    }
+  
+  input[type="radio"] {
+    /* 원하는 스타일 설정 */
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    accent-color: #007bff; /* radio 버튼 색상 변경 (optional) */
+  }
+
+  </style>
+
+</head>
+<body>
+  <form id="reportForm">
+    <!-- Page 1 -->
+    <div class="page active" id="page1">
+      <h2>재해 유형</h2>
+      <button type="button" onclick="goToPage('page2')">1. 업무 중 사고가 발생한 적이 있었습니까?</button><br><br>
+      <button type="button" onclick="goToPage('page3')">2. 업무를 하면서 지속적인 통증이 발생되고 있습니까?</button><br><br>
+      <button type="button" onclick="goToPage('page4')">3. 출퇴근하다 교통사고를 당하였습니까?</button>
+    </div>
+
+    <!-- Page 2 -->
+    <div class="page" id="page2">
+      <h2>업무 중 사고</h2>
+      <label>4일 이상 입원 치료나 수술 받았나요? 
+        <input type="radio" name="injuredHospital" value="yes"> 예 <input type="radio" name="injuredHospital" value="no"> 아니오</label><br>
+      <label>어디가 다쳤나요? <input type="text" name="injuredPart"></label><br>
+      <label>사고는 언제 발생했나요? ex. 2023년 4월 25일 <input type="text" name="accidentTime"></label><br>
+      <button type="button" onclick="goToPage('page4')">다음</button>
+    </div>
+
+    <!-- Page 3 -->
+    <div class="page" id="page3">
+      <h2>업무 중 질병</h2>
+      <label>통증이 계속되고 있나요? <input type="radio" name="chronicPain" value="yes"> 예 <input type="radio" name="chronicPain" value="no"> 아니오</label><br>
+      <label>어디가 아프신가요? <input type="text" name="painArea"></label><br>
+      <button type="button" onclick="goToPage('page4')">다음</button>
+    </div>
+
+    <!-- Page 4 -->
+    <div class="page" id="page4">
+      <h2>병원</h2>
+      <label>병원에서 치료나 수술을 받았나요? <input type="radio" name="hospitalVisit" value="yes"> 예 <input type="radio" name="hospitalVisit" value="no"> 아니오</label>
+      <button type="button" onclick="goToPage('page6')">다음</button>
+
+    </div>
+
+    <!-- Page 5 -->
+    <div class="page" id="page5">
+      <h2>병원 정보</h2>
+      <label>치료 혹은 수술을 받은 병원이 어디인가요? <input type="text" name="hospitalName"></label><br>
+      <label>의사 소견서를 받았나요? <input type="radio" name="opinionLetter" value="yes"> 예 <input type="radio" name="opinionLetter" value="no"> 아니오</label><br>
+      <label>진단서를 받았나요? <input type="radio" name="diagnosis" value="yes"> 예 <input type="radio" name="diagnosis" value="no"> 아니오</label><br>
+      <button type="button" onclick="goToPage('page6')">다음</button>
+    </div>
+
+    <!-- Page 6 -->
+    <div class="page" id="page6">
+      <h2>사건 경위서</h2>
+      <label>사고가 발생한 시간은 언제인가요? <input type="text" name="eventTime"></label><br>
+      <label>사고가 발생한 장소는 어디인가요? <input type="text" name="eventPlace"></label><br>
+      <label>현장에 함께 있거나, 목격한 사람이 누구인가요? <input type="text" name="witness"></label><br>
+      <label>안전장비를 착용한 채 노동 중이었나요? <input type="radio" name="safetyGear" value="yes"> 예 <input type="radio" name="safetyGear" value="no"> 아니오</label><br>
+      <label>현재 당한 사고에 대비하기 위한 안전교육이 있었나요? <input type="radio" name="safetyTraining" value="yes"> 예 <input type="radio" name="safetyTraining" value="no"> 아니오</label><br>
+      <label>119를 이용하여 병원으로 이송되었나요? <input type="radio" name="emergencyTransport" value="yes"> 예 <input type="radio" name="emergencyTransport" value="no"> 아니오</label><br>
+      <button type="button" onclick="goToPage('page7')">다음</button>
+    </div>
+
+    <!-- Page 7 -->
+    <div class="page" id="page7">
+      <h2>추가 증거 자료</h2>
+      <label>사고 현장 사진이 있나요? <input type="radio" name="photoEvidence" value="yes"> 예 <input type="radio" name="photoEvidence" value="no"> 아니오</label><br>
+      <label>동료의 진술을 바탕으로 사실확인서나 녹취록이 있나요? <input type="radio" name="statementEvidence" value="yes"> 예 <input type="radio" name="statementEvidence" value="no"> 아니오</label><br>
+      <label>본인 명의 통장이 있나요? <input type="radio" name="bankAccount" value="yes"> 예 <input type="radio" name="bankAccount" value="no"> 아니오</label><br>
+      <label>임금 증빙 자료(계약서, 입금 내역 등)가 있나요? <input type="radio" name="wageProof" value="yes"> 예 <input type="radio" name="wageProof" value="no"> 아니오</label><br>
+      <label>거주지 주변에 있는 근로복지공단의 위치를 알고 있나요? <input type="radio" name="knowsAgency" value="yes"> 예 <input type="radio" name="knowsAgency" value="no"> 아니오</label><br>
+      <label>주변에 서류와 관련하여 도움을 줄 수 있는 사람이 있나요? <input type="radio" name="hasHelper" value="yes"> 예 <input type="radio" name="hasHelper" value="no"> 아니오</label><br>
+      <button type="submit">제출하기</button>
+    </div>
+  </form>
+
+  <script>
+    function goToPage(id) {
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+  </script>
+</body>
+</html>

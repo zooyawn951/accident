@@ -2,93 +2,62 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>산재 신청 셀프 체크</title>
+  <title>언어 선택</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; background: #f2f2f2; }
-    #question-box, #result-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
-    h2 { margin-top: 0; }
-    button { padding: 10px 20px; margin: 1rem 1rem 0 0; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; }
-    .yes { background-color: #4CAF50; color: white; }
-    .no { background-color: #f44336; color: white; }
-    ul { padding-left: 1.2rem; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+    }
+
+    .language-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .language-button {
+      width: 200px;
+      margin: 10px;
+      padding: 15px;
+      background-color: #f0f0f0;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .language-button:hover {
+      background-color: #e0e0e0;
+      border-color: #888;
+    }
   </style>
 </head>
 <body>
+  <h1>산재 신청 자가진단 웹사이트에 오신 걸 환영합니다</h1>
+  <h2>언어를 선택해주세요</h2>
 
-<div id="question-box">
-  <h2 id="question">산재 신청 셀프 체크 알고리즘에 오신 걸 환영합니다.<br><br>당신은 업무 중에 한 번에 갑자기 다친 사고가 있었습니까?</h2>
-  <button class="yes" onclick="handleAnswer('y')">예 (Y)</button>
-  <button class="no" onclick="handleAnswer('n')">아니오 (N)</button>
-</div>
+  <div class="language-container">
+    <div class="language-button" onclick="goToForm('ko')">한국어 (Korean)</div>
+    <div class="language-button" onclick="goToForm('en')">English (영어)</div>
+    <div class="language-button" onclick="goToForm('ne')">नेपाली (네팔어)</div>
+    <div class="language-button" onclick="goToForm('bd')">বাংলা (방글라데시어)</div>
+    <div class="language-button" onclick="goToForm('mm')">မြန်မာစာ (미얀마어)</div>
+    <div class="language-button" onclick="goToForm('km')">ភាសាខ្មែរ (캄보디아어)</div>
+  </div>
 
-<div id="result-box" style="display: none;">
-  <h2>✅ 당신의 결과 요약</h2>
-  <h3>🧭 현재 판단 경로:</h3>
-  <ul id="stance-list"></ul>
-  <h3>📄 필요한 서류:</h3>
-  <ul id="need-list"></ul>
-  <h3>📁 이미 확보한 서류:</h3>
-  <ul id="have-list"></ul>
-  <p>📞 도움이 필요하다면:<br>
-    - 이주노동자센터, 공익법센터, 통역지원단체에 문의하세요.<br>
-    - <strong>[외국인근로자 산재지원 콜센터] 1644-1350 (통역 가능)</strong></p>
-</div>
-
-<script>
-const result = {
-  "A": "업무 중 사고",
-  "B": "업무 중 질병",
-  "C": "일반 질환 또는 비산재",
-  "D": "현직자 경로",
-  "E": "퇴사자 경로",
-  "F": "산재 신청 기한 초과",
-  "G": "중증 사고/질병",
-  "H": "경증 산재",
-  "I": "치료 중단, 미진단, 기타 특이 상황"
-};
-
-let stance = [], document_need = [], document_have = [];
-let step = 0;
-
-const questions = [
-  { text: "당신은 업무 중에 한 번에 갑자기 다친 사고가 있었습니까?", yes: () => { stance.push(result.A); step = 2; }, no: () => { step = 1; } },
-  { text: "업무를 하면서 같은 동작을 반복하거나 유해물질에 노출되어 특정 부위가 계속 아프거나 악화되었습니까?", yes: () => { stance.push(result.B); step = 2; }, no: () => { stance.push(result.C); step = 2; } },
-  { text: "사고(또는 증상 발생) 이후, 지금도 같은 회사에서 일하고 있습니까?", yes: () => { stance.push(result.D); step = 5; }, no: () => { step = 3; } },
-  { text: "회사를 그만둔 지 3년 이내입니까?", yes: () => { stance.push(result.E); step = 5; }, no: () => { stance.push(result.F); step = 5; } },
-  { text: "사고나 질병으로 인해 입원한 적이 있거나 수술을 받았습니까?", yes: () => { stance.push(result.G); step = 7; }, no: () => { step = 6; } },
-  { text: "외래 진료(통원치료)만 받고 있습니까?", yes: () => { stance.push(result.H); step = 7; }, no: () => { stance.push(result.I); document_need.push("치료 및 진찰이 필요한 경우 즉시 병원으로 갈 것. 미리 진단서를 받아야 증거 자료로 사용할 수 있음"); step = 10; } },
-  { text: "의사에게서 산재용 진단서 또는 소견서를 발급받았습니까?", yes: () => { document_have.push("업무상 재해 산재 신청용 소견서"); step++; }, no: () => { document_need.push("주치의에게 '업무상 재해 산재 신청용 소견서' 요청 필수"); step++; } },
-  { text: "초진기록, 영상자료(MRI, CT 등)를 병원에서 사본으로 발급받았습니까?", yes: () => { document_have.push("초진기록, 영상자료(MRI, CT 등)"); step++; }, no: () => { document_need.push("병원 의무기록실에 '산재 신청용으로' 요청 (수수료 발생 가능)"); step++; } },
-  { text: "사고 당시 119에 신고되었거나, 동료가 목격한 진술서를 확보했습니까?", yes: () => { document_have.push("신고기록 혹은 동료의 목격 진술서"); step++; }, no: () => { document_need.push("가능하면 동료에게 진술서 자필 작성 요청\n- 119 사고사실확인원은 소방서 요청 가능\n- 없을 경우 자필 사고 경위서로 대체"); step++; } },
-  { text: "근로계약서, 급여 명세서, 입금 내역 등 임금을 증명할 수 있는 자료가 있습니까?", yes: () => { document_have.push("임금 증명용 서류"); step++; }, no: () => { document_need.push("통장 입금 내역 캡처, 메시지, 메모 등 최대한 정리"); step++; } },
-  { text: "사업주가 산재 신청에 반대하거나, 서류를 안 써줍니까?", yes: () => { document_need.push("보험가입자 의견서 ‘미제출’로 진행 가능. 단, 공단 조사 대비 필요"); showResults(); }, no: () => { document_have.push("사업주 서명 받으면 가장 좋음"); showResults(); } }
-];
-
-function handleAnswer(answer) {
-  const current = questions[step];
-  if (answer === 'y') current.yes();
-  else current.no();
-  showNextQuestion();
-}
-
-function showNextQuestion() {
-  if (step >= questions.length) return;
-  document.getElementById("question").innerHTML = questions[step].text;
-}
-
-function showResults() {
-  document.getElementById("question-box").style.display = "none";
-  document.getElementById("result-box").style.display = "block";
-
-  const sList = document.getElementById("stance-list");
-  const nList = document.getElementById("need-list");
-  const hList = document.getElementById("have-list");
-
-  stance.forEach(s => sList.innerHTML += `<li>${s}</li>`);
-  document_need.forEach(d => nList.innerHTML += `<li>${d}</li>`);
-  document_have.forEach(h => hList.innerHTML += `<li>${h}</li>`);
-}
-</script>
+  <script>
+    function goToForm(langCode) {
+      // 언어 코드에 따라 다른 파일로 이동
+      location.href = `form_${langCode}.html`;}
+  </script>
 
 </body>
 </html>

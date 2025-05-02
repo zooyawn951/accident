@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Information</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .language-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .language-button {
+      width: 200px;
+      margin: 10px;
+      padding: 15px;
+      background-color: #f0f0f0;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .language-button:hover {
+      background-color: #e0e0e0;
+      border-color: #888;
+    }
+
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+      <script>
+        function saveInfo() {
+          const name = document.getElementById('name').value;
+          const visa = document.getElementById('visa').value;
+          const region = document.getElementById('region').value;
+    
+          localStorage.setItem("name", name);
+          localStorage.setItem("visa", visa);
+          localStorage.setItem("region", region);
+        }
+    </script>
+</head>
+<body>
+  <h2>Please give your information</h2>
+
+  <form action = "previous.html" method="GET">
+
+    <label for="name">What is your name?</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="visa">Which visa do you have currently?</label>
+    <select id="visa" name="visa" required>
+      <option value="">Please choose</option>
+      <option value="미등록">unidentified</option>
+      <option value="E-9">E-9</option>
+      <option value="E-7">E-7</option>
+    </select>
+
+    <label for="region">Where is your workplace?</label>
+    <select id="region" name="region" required>
+      <option value="">Please choose</option>
+      <option value="서울특별시">서울특별시</option>
+      <option value="부산광역시">부산광역시</option>
+      <option value="대구광역시">대구광역시</option>
+      <option value="인천광역시">인천광역시</option>
+      <option value="광주광역시">광주광역시</option>
+      <option value="대전광역시">대전광역시</option>
+      <option value="울산광역시">울산광역시</option>
+      <option value="세종특별자치시">세종특별자치시</option>
+      <option value="경기도">경기도</option>
+      <option value="강원도">강원도</option>
+      <option value="충청북도">충청북도</option>
+      <option value="충청남도">충청남도</option>
+      <option value="전라북도">전라북도</option>
+      <option value="전라남도">전라남도</option>
+      <option value="경상북도">경상북도</option>
+      <option value="경상남도">경상남도</option>
+      <option value="제주도">제주도</option>
+    </select>
+
+    <button type="submit">Next step</button>
+  </form>
+</body>
+</html>

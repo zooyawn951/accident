@@ -1,0 +1,101 @@
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>আপনার তথ্য</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 50px auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+    <script>
+        function saveInfo() {
+          const name = document.getElementById('name').value;
+          const visa = document.getElementById('visa').value;
+          const region = document.getElementById('region').value;
+    
+          localStorage.setItem("name", name);
+          localStorage.setItem("visa", visa);
+          localStorage.setItem("region", region);
+        }
+    </script>
+</head>
+<body>
+  <h2>দয়া করে আপনার তথ্য দিন</h2>
+
+  <form action = "previous.html" method="GET">
+
+    <label for="name">আপনার নাম কী?</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="visa">আপনার বর্তমান ভিসার ধরণ কী?</label>
+    <select id="visa" name="visa" required>
+      <option value="">অনুগ্রহ করে নির্বাচন করুন</option>
+      <option value="미등록">নিবন্ধিত নয়</option>
+      <option value="E-9">E-9</option>
+      <option value="E-7">E-7</option>
+    </select>
+
+    <label for="region">আপনার কর্মস্থল কোথায়?</label>
+    <select id="region" name="region" required>
+      <option value="">অনুগ্রহ করে নির্বাচন করুন</option>
+      <option value="서울특별시">সিউল</option>
+      <option value="부산광역시">বুসান</option>
+      <option value="대구광역시">ডেগু</option>
+      <option value="인천광역시">ইনচন</option>
+      <option value="광주광역시">গওয়াংজু</option>
+      <option value="대전광역시">ডেজন</option>
+      <option value="울산광역시">উলসান</option>
+      <option value="세종특별자치시">সেজং</option>
+      <option value="경기도">গিয়ংগিদো</option>
+      <option value="강원도">কাংউন্ডো</option>
+      <option value="충청북도">চুংচংবুকদো</option>
+      <option value="충청남도">চুংচংনামদো</option>
+      <option value="전라북도">জল্লাবুকদো</option>
+      <option value="전라남도">জল্লানামদো</option>
+      <option value="경상북도">গিয়ংসাংবুকদো</option>
+      <option value="경상남도">গিয়ংসাংনামদো</option>
+      <option value="제주도">জেজু</option>
+    </select>
+
+    <button type="submit">পরবর্তী ধাপ</button>
+  </form>
+</body>
+</html>

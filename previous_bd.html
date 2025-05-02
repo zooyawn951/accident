@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="bd">
+<head>
+  <meta charset="UTF-8">
+  <title>স্ব-পরীক্ষা: শ্রমিক দুর্ঘটনার আবেদন</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f2f2f2; }
+    #question-box, #result-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+    h2 { margin-top: 0; }
+    button { padding: 10px 20px; margin: 1rem 1rem 0 0; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; }
+    .yes { background-color: #4CAF50; color: white; }
+    .no { background-color: #f44336; color: white; }
+    ul { padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+
+<div id="question-box">
+  <h2 id="question">আপনি কি কাজ করার সময় হঠাৎ করে একবারে আহত হয়েছিলেন?</h2>
+  <button class="yes" onclick="handleAnswer('y')">হ্যাঁ (Y)</button>
+  <button class="no" onclick="handleAnswer('n')">না (N)</button>
+</div>
+
+<div id="result-box" style="display: none;">
+  <h2>✅ ফলাফল সংক্ষিপ্তসার</h2>
+  <h3>🧭 শ্রমিক দুর্ঘটনার ধরণ:</h3>
+  <ul id="stance-list"></ul>
+  <h3>📄 প্রয়োজনীয় নথিপত্র:</h3>
+  <ul id="need-list"></ul>
+  <h3>📁 ইতিমধ্যে আপনার কাছে থাকা নথিপত্র:</h3>
+  <ul id="have-list"></ul>
+  <p>📞 ইতিমধ্যে আপনার কাছে থাকা নথিপত্র:<br>
+    - কাছাকাছি অভিবাসী শ্রমিক কেন্দ্রের সাথে যোগাযোগ করুন<br>
+    - <strong>[বিদেশি শ্রমিকদের জন্য শ্রমিক দুর্ঘটনা সহায়তা কল সেন্টার] 1644-1350 (অনুবাদ/দোভাষী ব্যবস্থা আছে)</strong></p>
+</div>
+
+<script>
+const result = {
+  "A": "কাজের সময় দুর্ঘটনা",
+  "B": "কাজের সময় হওয়া রোগ/অসুস্থতা",
+  "C": "এটি শ্রমিক দুর্ঘটনার মধ্যে পড়ে না",
+  "D": "যারা বর্তমানে কাজ করছেন",
+  "E": "যারা বর্তমানে কাজ করছেন না",
+  "F": "আবেদনের সময়সীমা পার হয়ে গেছে",
+  "G": "গুরুতর",
+  "H": "হালকা",
+  "I": "চিকিৎসা বন্ধ করা হয়েছে"
+};
+
+let stance = [], document_need = [], document_have = [];
+let step = 0;
+
+const questions = [
+  { text: "আপনি কি কাজ করার সময় হঠাৎ করে একবারে আহত হয়েছিলেন?", yes: () => { stance.push(result.A); step = 2; }, no: () => { step = 1; } },
+  { text: "আপনি কি একই ধরণের কাজের পুনরাবৃত্তি অথবা ক্ষতিকর পদার্থের সংস্পর্শে থাকার কারণে শরীরের একটি নির্দিষ্ট অংশে দীর্ঘমেয়াদী ব্যথা বা সমস্যা অনুভব করছেন?", yes: () => { stance.push(result.B); step = 2; }, no: () => { stance.push(result.C); step = 2; } },
+  { text: "দুর্ঘটনা বা লক্ষণ দেখা দেওয়ার পর, আপনি কি এখনো একই কোম্পানিতে কাজ করছেন?", yes: () => { stance.push(result.D); step = 5; }, no: () => { step = 3; } },
+  { text: "আপনি কি তিন বছরের মধ্যে কোম্পানি ছেড়েছেন?", yes: () => { stance.push(result.E); step = 5; }, no: () => { stance.push(result.F); step = 5; } },
+  { text: "আপনি কি দুর্ঘটনা বা অসুস্থতার কারণে হাসপাতালে ভর্তি হয়েছেন অথবা অস্ত্রোপচার করেছেন?", yes: () => { stance.push(result.G); step = 7; }, no: () => { step = 6; } },
+  { text: "আপনি কি শুধু বহির্বিভাগ চিকিৎসা (আউটপেশেন্ট) গ্রহণ করছেন?", yes: () => { stance.push(result.H); step = 7; }, 
+  no: () => { stance.push(result.I); document_need.push("চিকিৎসা বা পরামর্শ প্রয়োজন হলে দ্রুত হাসপাতালে যান। আগে থেকেই ডায়াগনসিস রিপোর্ট সংগ্রহ করুন, যাতে তা প্রমাণ হিসেবে ব্যবহার করা যায়।"); step = 10; } },
+  { text: "আপনি কি চিকিৎসকের কাছ থেকে শ্রমিক দুর্ঘটনার জন্য একটি ডায়াগনসিস রিপোর্ট বা মতামতপত্র পেয়েছেন?", yes: () => { document_have.push("কাজ-সম্পর্কিত দুর্ঘটনার জন্য শ্রমিক দুর্ঘটনা আবেদনপত্রে ব্যবহৃত চিকিৎসকের মতামতপত্র"); step++; }, no: () => { document_need.push("নিজের প্রধান চিকিৎসকের কাছ থেকে ‘কাজ-সম্পর্কিত দুর্ঘটনার আবেদনপত্রের জন্য মতামতপত্র’ অবশ্যই সংগ্রহ করুন"); step++; } },
+  { text: "আপনি কি হাসপাতাল থেকে প্রাথমিক চিকিৎসা রেকর্ড এবং চিত্র (যেমন: এমআরআই, সিটি স্ক্যান) এর কপি সংগ্রহ করেছেন?", yes: () => { document_have.push("초진기록, 영상자료(MRI, CT 등)"); step++; }, no: () => { document_need.push("হাসপাতালে বলুন যে এটি ‘শ্রমিক দুর্ঘটনা আবেদনের জন্য’ দরকার (অতিরিক্ত খরচ হতে পারে)"); step++; } },
+  { text: "দুর্ঘটনার সময় কি ১১৯-এ কল করা হয়েছিল বা কি কোনো সহকর্মীর সাক্ষ্য সংগ্রহ করেছেন?", yes: () => { document_have.push("প্রতিবেদন নথি অথবা সহকর্মীর সাক্ষ্যপ্রমাণ"); step++; }, no: () => { document_need.push("সম্ভব হলে, সহকর্মীকে নিজ হাতে সাক্ষ্য বিবৃতি লিখতে বলুন\n- দুর্ঘটনার সত্যতা যাচাইয়ের নথি ১১৯ বা ফায়ার স্টেশন থেকে অনুরোধ করা যায়\n- যদি তা না থাকে, তাহলে নিজ হাতে লেখা একটি দুর্ঘটনা বিবরণপত্র ব্যবহার করুন"); step++; } },
+  { text: "আপনার কি শ্রম চুক্তি, বেতন বিবরণী, বা অর্থপ্রদানের রেকর্ড আছে যা আপনি বেতন প্রমাণ করতে ব্যবহার করতে পারেন?", yes: () => { document_have.push("বেতনের প্রমাণস্বরূপ নথিপত্র"); step++; }, no: () => { document_need.push("ব্যাংক অ্যাকাউন্টে টাকা জমার স্ক্রিনশট, মেসেজ, বা নোট ইত্যাদি যতটা সম্ভব সংরক্ষণ করুন"); step++; } },
+  { text: "আপনার নিয়োগকর্তা কি আবেদন করতে বাধা দিচ্ছেন অথবা প্রয়োজনীয় নথিপত্র দিচ্ছেন না?", yes: () => { document_need.push("বীমা সদস্যের মতামতপত্র ছাড়াই আবেদন করা সম্ভব। তবে, শ্রমিক দুর্ঘটনা তদন্তের জন্য প্রস্তুত থাকতে হবে।"); showResults(); }, no: () => { document_have.push("কোম্পানির মালিকের স্বাক্ষর পাওয়া সবচেয়ে ভালো হবে"); showResults(); } }
+];
+
+function handleAnswer(answer) {
+  const current = questions[step];
+  if (answer === 'y') current.yes();
+  else current.no();
+  showNextQuestion();
+}
+
+function showNextQuestion() {
+  if (step >= questions.length) return;
+  document.getElementById("question").innerHTML = questions[step].text;
+}
+
+function showResults() {
+  document.getElementById("question-box").style.display = "none";
+  document.getElementById("result-box").style.display = "block";
+
+  const sList = document.getElementById("stance-list");
+  const nList = document.getElementById("need-list");
+  const hList = document.getElementById("have-list");
+
+  stance.forEach(s => sList.innerHTML += `<li>${s}</li>`);
+  document_need.forEach(d => nList.innerHTML += `<li>${d}</li>`);
+  document_have.forEach(h => hList.innerHTML += `<li>${h}</li>`);
+}
+</script>
+
+</body>
+</html>

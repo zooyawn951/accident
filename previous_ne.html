@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>औद्योगिक दुर्घटना आवेदन स्व-परीक्षण</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f2f2f2; }
+    #question-box, #result-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+    h2 { margin-top: 0; }
+    button { padding: 10px 20px; margin: 1rem 1rem 0 0; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; }
+    .yes { background-color: #4CAF50; color: white; }
+    .no { background-color: #f44336; color: white; }
+    ul { padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+
+<div id="question-box">
+  <h2 id="question">के तपाईं कामको क्रममा एकैचोटि अचानक चोट लागेको दुर्घटनामा पर्नु भएको छ?</h2>
+  <button class="yes" onclick="handleAnswer('y')">हो (Y)</button>
+  <button class="no" onclick="handleAnswer('n')">होइन (N)</button>
+</div>
+
+<div id="result-box" style="display: none;">
+  <h2>✅ परिणाम सारांश</h2>
+  <h3>🧭 औद्योगिक दुर्घटनाको प्रकार:</h3>
+  <ul id="stance-list"></ul>
+  <h3>📄 आवश्यक कागजातहरू:</h3>
+  <ul id="need-list"></ul>
+  <h3>📁 पहिले नै भएको कागजातहरू:</h3>
+  <ul id="have-list"></ul>
+  <p>📞 यदि तपाईंलाई सहायता आवश्यक छ भने:<br>
+    - नजिकको प्रवासी श्रमिक केन्द्रमा सम्पर्क गर्नुहोस्.<br>
+    - <strong>[विदेशी श्रमिक औद्योगिक दुर्घटना सहायता कल सेन्टर] 1644-1350 (अनुवाद उपलब्ध)</strong></p>
+</div>
+
+<script>
+const result = {
+  "A": "कामको क्रममा भएको दुर्घटना",
+  "B": "कामको क्रममा लागेको रोग",
+  "C": "औद्योगिक दुर्घटना होइन",
+  "D": "हाल काम गरिरहनु भएको व्यक्ति",
+  "E": "हाल काम नगरेको व्यक्ति",
+  "F": "औद्योगिक दुर्घटना आवेदनको समय सीमा नाघेको",
+  "G": "गम्भीर",
+  "H": "सामान्य",
+  "I": "उपचार रोकिएको"
+};
+
+let stance = [], document_need = [], document_have = [];
+let step = 0;
+
+const questions = [
+  { text: "के तपाईं कामको क्रममा एकैचोटि अचानक चोट लागेको दुर्घटनामा पर्नु भएको छ?", yes: () => { stance.push(result.A); step = 2; }, no: () => { step = 1; } },
+  { text: "के तपाईं काम गर्दा एउटै क्रियाकलाप दोहोर्याउनु भएको छ वा हानिकारक पदार्थमा सम्पर्कमा आएर कुनै विशेष भागमा निरन्तर पीडा वा बिग्रिएको छ?", yes: () => { stance.push(result.B); step = 2; }, no: () => { stance.push(result.C); step = 2; } },
+  { text: "दुर्घटना (वा लक्षण देखा परेपछि) पछि पनि तपाईं अझै उही कम्पनीमा काम गरिरहनु भएको छ?", yes: () => { stance.push(result.D); step = 5; }, no: () => { step = 3; } },
+  { text: "के तपाईंले कम्पनी छोडेको ३ वर्ष भित्र हो?", yes: () => { stance.push(result.E); step = 5; }, no: () => { stance.push(result.F); step = 5; } },
+  { text: "के तपाईं दुर्घटना वा रोगका कारण अस्पतालमा भर्ना हुनु भएको छ वा शल्यक्रिया गराउनु भएको छ?", yes: () => { stance.push(result.G); step = 7; }, no: () => { step = 6; } },
+  { text: "के तपाईं बाह्यरोगी उपचार मात्र गरिरहनु भएको छ?", yes: () => { stance.push(result.H); step = 7; }, no: () => { stance.push(result.I); document_need.push("यदि उपचार वा जाँच आवश्यक छ भने तुरुन्त अस्पताल जानुहोस्। पहिल्यै प्रमाणपत्र लिएर राख्नुपर्छ ताकि प्रमाणको रूपमा प्रयोग गर्न सकियोस्।"); step = 10; } },
+  { text: "के तपाईंले डाक्टरबाट औद्योगिक दुर्घटनाको लागि प्रमाणपत्र वा सिफारिसपत्र प्राप्त गर्नु भएको छ?", yes: () => { document_have.push("औद्योगिक दुर्घटना आवेदनका लागि आवश्यक सिफारिसपत्र"); step++; }, no: () => { document_need.push("मुख्य चिकित्सकलाई 'औद्योगिक दुर्घटना आवेदन सिफारिसपत्र' दिन अनुरोध गर्नु अनिवार्य छ"); step++; } },
+  { text: "के तपाईंले अस्पतालबाट प्रारम्भिक जाँचको रेकर्ड, छविचित्र (MRI, CT आदि) को प्रतिलिपि प्राप्त गर्नु भएको छ?", yes: () => { document_have.push("प्रारम्भिक जाँचको विवरण, छविचित्र (MRI, CT आदि)"); step++; }, no: () => { document_need.push("अस्पतालमा 'औद्योगिक दुर्घटना आवेदनका लागि' भनेर अनुरोध गर्नुहोस् (थप शुल्क लाग्न सक्छ)"); step++; } },
+  { text: "के दुर्घटनाको समयमा ११९ मा रिपोर्ट गरिएको थियो वा सहकर्मीको साक्षात्कार प्राप्त गरिएको छ?", yes: () => { document_have.push("उजुरी रेकर्ड वा सहकर्मीको प्रत्यक्षदर्शी साक्षात्कार"); step++; }, no: () => { document_need.push("सकिन्छ भने सहकर्मीलाई हस्तलिखित साक्षात्कार लेख्न अनुरोध गर्नुहोस्\n- 119 दुर्घटना पुष्टि प्रमाणपत्र दमकल कार्यालयबाट अनुरोध गर्न सकिन्छ\n- नभएमा हस्तलिखित दुर्घटनाको विवरणले प्रतिस्थापन गर्नुहोस्"); step++; } },
+  { text: "के तपाईं सँग रोजगार सम्झौता, तलब विवरण, भुक्तानी विवरण आदि जस्ता तलब प्रमाणित गर्न सकिने कागजातहरू छन्?", yes: () => { document_have.push("तलब प्रमाणित गर्न कागजातहरू"); step++; }, no: () => { document_need.push("बैंक खातामा आएको रकमको स्क्रिनसट, सन्देश, नोट आदि सकेसम्म व्यवस्थित गर्नुहोस्"); step++; } },
+  { text: "के रोजगारदाताले औद्योगिक दुर्घटना आवेदनमा विरोध गर्नु भएको छ वा कागजातहरू प्रदान गर्नु भएको छैन?", yes: () => { document_need.push("बीमा लिने व्यक्तिको रायपत्र ‘नदिइ’ पनि प्रक्रिया अगाडि बढाउन सकिन्छ। तर, सार्वजनिक संस्थाको छानबिनको लागि तयार रहनुपर्छ।"); showResults(); }, no: () => { document_have.push("रोजगारदाताको हस्ताक्षर प्राप्त भयो भने सबैभन्दा राम्रो हुन्छ"); showResults(); } }
+];
+
+function handleAnswer(answer) {
+  const current = questions[step];
+  if (answer === 'y') current.yes();
+  else current.no();
+  showNextQuestion();
+}
+
+function showNextQuestion() {
+  if (step >= questions.length) return;
+  document.getElementById("question").innerHTML = questions[step].text;
+}
+
+function showResults() {
+  document.getElementById("question-box").style.display = "none";
+  document.getElementById("result-box").style.display = "block";
+
+  const sList = document.getElementById("stance-list");
+  const nList = document.getElementById("need-list");
+  const hList = document.getElementById("have-list");
+
+  stance.forEach(s => sList.innerHTML += `<li>${s}</li>`);
+  document_need.forEach(d => nList.innerHTML += `<li>${d}</li>`);
+  document_have.forEach(h => hList.innerHTML += `<li>${h}</li>`);
+}
+</script>
+
+</body>
+</html>

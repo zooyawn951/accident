@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <title>ការត្រួតពិនិត្យដោយខ្លួនឯងសម្រាប់ការដាក់ពាក្យសុំសុវត្ថិភាពការងារ</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f2f2f2; }
+    #question-box, #result-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+    h2 { margin-top: 0; }
+    button { padding: 10px 20px; margin: 1rem 1rem 0 0; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; }
+    .yes { background-color: #4CAF50; color: white; }
+    .no { background-color: #f44336; color: white; }
+    ul { padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+
+<div id="question-box">
+  <h2 id="question">តើអ្នកបានរងរបួសដោយចៃដន្យខណៈពេលកំពុងធ្វើការដែរឬទេ?</h2>
+  <button class="yes" onclick="handleAnswer('y')">ចាស (Y)</button>
+  <button class="no" onclick="handleAnswer('n')">ទេ (N)</button>
+</div>
+
+<div id="result-box" style="display: none;">
+  <h2>✅ សង្ខេបលទ្ធផល</h2>
+  <h3>🧭 ប្រភេទគ្រោះថ្នាក់ការងារ:</h3>
+  <ul id="stance-list"></ul>
+  <h3>📄 ឯកសារដែលត្រូវការ:</h3>
+  <ul id="need-list"></ul>
+  <h3>📁 ឯកសារដែលអ្នកមានរួចហើយ:</h3>
+  <ul id="have-list"></ul>
+  <p>📞 ប្រសិនបើត្រូវការជំនួយ:<br>
+    - សូមទាក់ទងមជ្ឈមណ្ឌលកម្មករជំរុញជិតបំផុត.<br>
+    - <strong>[សេវាក្នុងការជួយសុំសុវត្ថិភាពការងារសម្រាប់កម្មករអន្តរជាតិ] 1644-1350 (មានសេវាបកប្រែភាសា)</strong></p>
+</div>
+
+<script>
+const result = {
+  "A": "គ្រោះថ្នាក់ក្នុងពេលធ្វើការ",
+  "B": "ជំងឺដែលកើតឡើងដោយសារការងារ",
+  "C": "មិនមែនជាគ្រោះថ្នាក់ការងារ",
+  "D": "កំពុងធ្វើការ",
+  "E": "មិនកំពុងធ្វើការ",
+  "F": "អស់ពេលកំណត់ដាក់ពាក្យ",
+  "G": "ធ្ងន់ធ្ងរ",
+  "H": "ស្រាល",
+  "I": "បានផ្អាកការព្យាបាល"
+};
+
+let stance = [], document_need = [], document_have = [];
+let step = 0;
+
+const questions = [
+  { text: "តើអ្នកបានរងរបួសដោយចៃដន្យខណៈពេលកំពុងបំពេញភារកិច្ចការងារដែរឬទេ?", yes: () => { stance.push(result.A); step = 2; }, no: () => { step = 1; } },
+  { text: "តើអ្នកមានអាការៈឈឺ ឬមានបញ្ហាផ្នែកណាមួយនៃរាងកាយ ដោយសារតែការធ្វើចលនាការងារដដែលៗ ឬក៏ប៉ះពាល់ដោយសារធាតុគ្រោះថ្នាក់ជាបន្តបន្ទាប់ដែរឬទេ?", yes: () => { stance.push(result.B); step = 2; }, no: () => { stance.push(result.C); step = 2; } },
+  { text: "បន្ទាប់ពីមានអំពើគ្រោះថ្នាក់ (ឬអាការៈរោគបង្ហាញ) តើអ្នកនៅតែធ្វើការនៅក្រុមហ៊ុនដដែលដែរឬទេ?", yes: () => { stance.push(result.D); step = 5; }, no: () => { step = 3; } },
+  { text: "តើអ្នកលាឈប់ពីក្រុមហ៊ុនក្នុងរយៈពេលបីឆ្នាំចុងក្រោយនេះដែរឬទេ?", yes: () => { stance.push(result.E); step = 5; }, no: () => { stance.push(result.F); step = 5; } },
+  { text: "តើអ្នកធ្លាប់ត្រូវចូលពេទ្យ ឬធ្វើវះកាត់ ដោយសារគ្រោះថ្នាក់ ឬជំងឺដែរឬទេ??", yes: () => { stance.push(result.G); step = 7; }, no: () => { step = 6; } },
+  { text: "តើអ្នកកំពុងទទួលការព្យាបាលតែខាងក្រៅ (មិនជាមនុស្សសម្រាកក្នុង) ដែរឬទេ?", yes: () => { stance.push(result.H); step = 7; }, no: () => { stance.push(result.I); document_need.push("ប្រសិនបើត្រូវការព្យាបាល ឬពិនិត្យសុខភាព សូមទៅមន្ទីរពេទ្យភ្លាមៗ។ ត្រូវយកលិខិតវិនិច្ឆ័យជាមុន ដើម្បីប្រើជាឯកសារព្រមាន។"); step = 10; } },
+  { text: "តើអ្នកបានទទួលលិខិតវិនិច្ឆ័យ ឬលិខិតយោបល់ពីវេជ្ជបណ្ឌិតសម្រាប់ករណីគ្រោះថ្នាក់ការងារដែរឬទេ?", yes: () => { document_have.push("លិខិតយោបល់សម្រាប់ដាក់ពាក្យគ្រោះថ្នាក់ការងារពាក់ព័ន្ធនឹងការងារ"); step++; }, no: () => { document_need.push("ត្រូវស្នើសុំលិខិតយោបល់ពីវេជ្ជបណ្ឌិតផ្ទាល់សម្រាប់ដាក់ពាក្យសុំសុវត្ថិភាពការងារពាក់ព័ន្ធនឹងការងារ(업무상 재해 산재 신청용 소견서)"); step++; } },
+  { text: "តើអ្នកបានយកច្បាប់ចម្លងនៃកំណត់ត្រាព្យាបាលដំបូង និងរូបភាពពិនិត្យ (ដូចជា MRI, CT) ពីមន្ទីរពេទ្យរួចហើយដែរឬទេ?", yes: () => { document_have.push("កំណត់ត្រាព្យាបាលដំបូង និងរូបភាព (MRI, CT ជាដើម)"); step++; }, no: () => { document_need.push("សូមប្រាប់មន្ទីរពេទ្យថា ត្រូវការសម្រាប់ដាក់ពាក្យគ្រោះថ្នាក់ការងារ (អាចមានថ្លៃបន្ថែម)"); step++; } },
+  { text: "នៅពេលកើតហេតុ តើបានជូនដំណឹងទៅ ១១៩ ឬទទួលបានសក្ខីប័ណ្ណពីមិត្តរួមការងារដែរឬទេ?", yes: () => { document_have.push("កំណត់ត្រាចុះបញ្ជី ឬសក្ខីប័ណ្ណពីមិត្តរួមការងារ"); step++; }, no: () => { document_need.push("ប្រសិនបើអាចស្នើសុំឲ្យមិត្តរួមការងារសរសេរបញ្ជាក់អំពីហេតុការណ៍ដោយខ្លួនឯង\n- ឯកសារបញ្ជាក់ពីគ្រោះថ្នាក់ 119 អាចស្នើសុំពីការិយាល័យអគ្គិសនី/អគ្គិភ័យ\n- បើមិនមានអាចសរសេររាយការណ៍អំពីហេតុការណ៍ដោយខ្លួនឯងជំនួសបាន"); step++; } },
+  { text: "តើអ្នកមានឯកសារដែលអាចបញ្ជាក់ប្រាក់ខែ ដូចជា កិច្ចសន្យាការងារ ប្រាក់ខែ ឬកំណត់ត្រាប្រាក់បញ្ចូលដែរឬទេ?", yes: () => { document_have.push("ឯកសារបញ្ជាក់ប្រាក់ខែ"); step++; }, no: () => { document_need.push("ថតអេក្រង់បញ្ចូលប្រាក់ក្នុងគណនី, សារ, កំណត់ត្រា។ ប្រមូលឯកសារឱ្យបានច្រើនតែមានសារៈសំខាន់"); step++; } },
+  { text: "តើម្ចាស់សហគ្រាសជាអ្នកដាក់ឲ្យមានឧបសគ្គ ឬមិនផ្ដល់ឯកសារដើម្បីដាក់ពាក្យសុំសុវត្ថិភាពការងារដែរឬទេ?", yes: () => { document_need.push("អាចដាក់ពាក្យបានដោយមិនបញ្ចូលលិខិតយោបល់ពីអ្នកធានា ប៉ុន្តែត្រូវរៀបចំពីការត្រួតពិនិត្យរបស់ស្ថាប័នពាក់ព័ន្ធ"); showResults(); }, no: () => { document_have.push("ប្រសិនបើអាចទទួលបានហត្ថលេខារបស់ម្ចាស់សហគ្រាស នឹងល្អបំផុត"); showResults(); } }
+];
+
+function handleAnswer(answer) {
+  const current = questions[step];
+  if (answer === 'y') current.yes();
+  else current.no();
+  showNextQuestion();
+}
+
+function showNextQuestion() {
+  if (step >= questions.length) return;
+  document.getElementById("question").innerHTML = questions[step].text;
+}
+
+function showResults() {
+  document.getElementById("question-box").style.display = "none";
+  document.getElementById("result-box").style.display = "block";
+
+  const sList = document.getElementById("stance-list");
+  const nList = document.getElementById("need-list");
+  const hList = document.getElementById("have-list");
+
+  stance.forEach(s => sList.innerHTML += `<li>${s}</li>`);
+  document_need.forEach(d => nList.innerHTML += `<li>${d}</li>`);
+  document_have.forEach(h => hList.innerHTML += `<li>${h}</li>`);
+}
+</script>
+
+</body>
+</html>

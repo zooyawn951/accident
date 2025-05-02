@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="mm">
+<head>
+  <meta charset="UTF-8">
+  <title>အလုပ်သမားအန္တရာယ်ကြောင့် တောင်းဆိုမှုကို ကိုယ်တိုင်စစ်ဆေးခြင်း</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f2f2f2; }
+    #question-box, #result-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+    h2 { margin-top: 0; }
+    button { padding: 10px 20px; margin: 1rem 1rem 0 0; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; }
+    .yes { background-color: #4CAF50; color: white; }
+    .no { background-color: #f44336; color: white; }
+    ul { padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+
+<div id="question-box">
+  <h2 id="question">သင်သည် အလုပ်လုပ်စဉ်အတွင်း ရုတ်တရက် ထိခိုက်ဒဏ်ရာရမှုရှိပါသလား?</h2>
+  <button class="yes" onclick="handleAnswer('y')">ဟုတ်ကဲ့ (Y)</button>
+  <button class="no" onclick="handleAnswer('n')">မဟုတ်ပါ (N)</button>
+</div>
+
+<div id="result-box" style="display: none;">
+  <h2>✅ ရလဒ်အကျဉ်းချုပ်</h2>
+  <h3>🧭 စက်မှုလုပ်ငန်းအန္တရာယ်အမျိုးအစား:</h3>
+  <ul id="stance-list"></ul>
+  <h3>📄 လိုအပ်သောစာရွက်စာတမ်းများ:</h3>
+  <ul id="need-list"></ul>
+  <h3>📁 ရှိပြီးသားစာရွက်စာတမ်းများ:</h3>
+  <ul id="have-list"></ul>
+  <p>📞 အကူအညီလိုအပ်ပါက:<br>
+    - သင်၏အနီးအနားရှိ နိုင်ငံခြားသားအလုပ်သမားစင်တာကို ဆက်သွယ်ပါ.<br>
+    - <strong>[နိုင်ငံခြားသားအလုပ်သမား စက်မှုအန္တရာယ်အတွက် အထောက်အပံ့ပေးသော ခေါ်ဆိုမှုစင်တာ] 1644-1350 (ဘာသာပြန်ခြင်းဖြင့် ဆက်သွယ်နိုင်သည်)</strong></p>
+</div>
+
+<script>
+const result = {
+  "A": "အလုပ်လုပ်စဉ်အတွင်း ဖြစ်ပွားသော အန္တရာယ်",
+  "B": "အလုပ်လုပ်စဉ်အတွင်း ဖြစ်ပွားသော ရောဂါ",
+  "C": "စက်မှုအန္တရာယ် မဟုတ်ပါ",
+  "D": "လုပ်ငန်းတွင် ဆက်လက်လုပ်ကိုင်နေသူ",
+  "E": "လုပ်ငန်းမှ ထွက်ခွာပြီးသူ로",
+  "F": "စက်မှုအန္တရာယ်တောင်းဆိုမှုအတွက် သတ်မှတ်ထားသောအချိန်ကာလ ကျော်လွန်သွားသည်",
+  "G": "ပြင်းထန်သောဒဏ်ရာ",
+  "H": "ပုံမှန်ဒဏ်ရာ",
+  "I": "ဆေးကုသမှုရပ်နားခြင်း"
+};
+
+let stance = [], document_need = [], document_have = [];
+let step = 0;
+
+const questions = [
+  { text: "သင်သည် အလုပ်လုပ်စဉ်အတွင်း ရုတ်တရက် ထိခိုက်ဒဏ်ရာရမှုရှိပါသလား?", yes: () => { stance.push(result.A); step = 2; }, no: () => { step = 1; } },
+  { text: "အလုပ်လုပ်စဉ်အတွင်း တူညီသောလှုပ်ရှားမှုများကို ထပ်ခါထပ်ခါလုပ်ခြင်း သို့မဟုတ် အန္တရာယ်ရှိသောဓာတုဗေဒပစ္စည်းများနှင့် ထိတွေ့မှုကြောင့် တစ်စိတ်တစ်ပိုင်းတွင် ဆက်လက်နာကျင်ခြင်း သို့မဟုတ် ပိုမိုဆိုးရွားလာခြင်းရှိပါသလား?", yes: () => { stance.push(result.B); step = 2; }, no: () => { stance.push(result.C); step = 2; } },
+  { text: "အန္တရာယ်ဖြစ်ပွားမှု (သို့မဟုတ် ရောဂါလက္ခဏာပေါ်ထွက်မှု) ဖြစ်ပြီးနောက်လည်း သင်သည် ယင်းကုမ္ပဏီတွင် ဆက်လက်လုပ်ကိုင်နေပါသလား?", yes: () => { stance.push(result.D); step = 5; }, no: () => { step = 3; } },
+  { text: "သင်သည် ယင်းကုမ္ပဏီမှ ထွက်ခွာခဲ့သောကာလသည် ၃ နှစ်အတွင်းဖြစ်ပါသလား?", yes: () => { stance.push(result.E); step = 5; }, no: () => { stance.push(result.F); step = 5; } },
+  { text: "အန္တရာယ်သို့မဟုတ် ရောဂါကြောင့် ဆေးရုံတက်ရောက်ခြင်း သို့မဟုတ် ခွဲစိတ်ကုသမှုခံယူခဲ့ဖူးပါသလား?", yes: () => { stance.push(result.G); step = 7; }, no: () => { step = 6; } },
+  { text: "သင်သည် အပြင်ဘက်ဆေးကုသမှု (အပြင်လူနာကုသမှု) သာလျှင် ခံယူနေပါသလား?", yes: () => { stance.push(result.H); step = 7; }, no: () => { stance.push(result.I); document_need.push("ဆေးကုသမှုနှင့် စစ်ဆေးမှု လိုအပ်ပါက ချက်ချင်း ဆေးရုံသို့ သွားပါ။ သက်သေစာတမ်းအဖြစ် အသုံးပြုနိုင်ရန် ကြိုတင်၍ ရောဂါရှာဖွေစာရင်းကို ရယူပါ။"); step = 10; } },
+  { text: "သင်သည် ဆရာဝန်ထံမှ စက်မှုအန္တရာယ်အတွက် အသိအမှတ်ပြုစာရွက်စာတမ်း သို့မဟုတ် အကြံပြုစာရင်းကို ထုတ်ပေးခံယူခဲ့ဖူးပါသလား?", yes: () => { document_have.push("အလုပ်ဆိုင်ရာ အန္တရာယ်အတွက် တောင်းဆိုရန် အသုံးပြုသော ဆရာဝန်၏ အကြံပြုစာ"); step++; }, no: () => { document_need.push("သင်၏ ဆရာဝန်ထံမှ 'အလုပ်ဆိုင်ရာ အန္တရာယ်အတွက် တောင်းဆိုရန် အသုံးပြုသော ဆရာဝန်၏ အကြံပြုစာ' ကို မဖြစ်မနေ တောင်းဆိုပါ။"); step++; } },
+  { text: "သင်သည် ဆေးရုံထံမှ ပထမဆုံးဆေးစစ်မှတ်တမ်းများ၊ ရုပ်ပုံဖိုင်များ (MRI, CT စသည်) ကို မိတ္တူထုတ်ယူခဲ့ဖူးပါသလား?", yes: () => { document_have.push("ပထမဆုံး ဆေးစစ်မှတ်တမ်းများ၊ ရုပ်ပုံဖိုင်များ (MRI, CT စသည်)"); step++; }, no: () => { document_need.push("ဆေးရုံထံ 'စက်မှုအန္တရာယ် တောင်းဆိုမှုအတွက်' ဟု တောင်းဆိုပါ (အပိုကြေးငွေ ပေးချေရန် လိုအပ်နိုင်သည်)"); step++; } },
+  { text: "အန္တရာယ်ဖြစ်ပွားချိန်တွင် ၁၁၉ သို့ အသိပေးခဲ့ခြင်း သို့မဟုတ် အလုပ်ဖော်တစ်ဦး၏ သက်သေခံစာကို ရရှိခဲ့ဖူးပါသလား?", yes: () => { document_have.push("အသိပေးမှတ်တမ်း သို့မဟုတ် အလုပ်ဖော်၏ မျက်မြင်သက်သေစာ서"); step++; }, no: () => { document_need.push("ဖြစ်နိုင်ပါက အလုပ်ဖော်ထံမှ ကိုယ်တိုင် ရေးသားသော သက်သေခံစာကို တောင်းဆိုပါ။\n- ၁၁၉ အန္တရာယ်ဖြစ်ပွားမှု အတည်ပြုစာတမ်းကို မီးသတ်ဌာနထံမှ တောင်းဆိုနိုင်သည်။\n- မရှိပါက ကိုယ်တိုင် ရေးသားသော အန္တရာယ်ဖြစ်ပွားမှု အကြောင်းအရာစာဖြင့် အစားထိုးနိုင်သည်။"); step++; } },
+  { text: "သင်သည် လုပ်ခလစာကို သက်သေပြနိုင်သော အလုပ်သဘောတူစာချုပ်၊ လစာအသေးစိတ်စာရင်း၊ ငွေသွင်းမှတ်တမ်းများ စသည်တို့ကို ရှိထားပါသလား?", yes: () => { document_have.push("လုပ်ခလစာ သက်သေပြနိုင်သော စာရွက်စာတမ်းများ"); step++; }, no: () => { document_need.push("ဘဏ်စာရင်း ငွေသွင်းမှတ်တမ်း၊ မက်ဆေ့ခ်ျများ၊ မှတ်စုများ စသည်တို့ကို အများဆုံး စုစည်းထားပါ။"); step++; } },
+  { text: "သင်၏အလုပ်ရှင်သည် စက်မှုအန္တရာယ်တောင်းဆိုမှုကို ဆန့်ကျင်သည် သို့မဟုတ် လိုအပ်သောစာရွက်စာတမ်းများကို မပေးပါသလား?", yes: () => { document_need.push("အာမခံဝင်သူ၏ အမြင်စာတမ်း မတင်သွင်းဘဲ ဆောင်ရွက်နိုင်သည်။ သို့သော် အလုပ်သမားအာမခံအဖွဲ့၏ စစ်ဆေးမှုအတွက် ပြင်ဆင်ထားရန် လိုအပ်သည်။"); showResults(); }, no: () => { document_have.push("အလုပ်ရှင်၏ လက်မှတ် ရရှိပါက အကောင်းဆုံး ဖြစ်သည်။"); showResults(); } }
+];
+
+function handleAnswer(answer) {
+  const current = questions[step];
+  if (answer === 'y') current.yes();
+  else current.no();
+  showNextQuestion();
+}
+
+function showNextQuestion() {
+  if (step >= questions.length) return;
+  document.getElementById("question").innerHTML = questions[step].text;
+}
+
+function showResults() {
+  document.getElementById("question-box").style.display = "none";
+  document.getElementById("result-box").style.display = "block";
+
+  const sList = document.getElementById("stance-list");
+  const nList = document.getElementById("need-list");
+  const hList = document.getElementById("have-list");
+
+  stance.forEach(s => sList.innerHTML += `<li>${s}</li>`);
+  document_need.forEach(d => nList.innerHTML += `<li>${d}</li>`);
+  document_have.forEach(h => hList.innerHTML += `<li>${h}</li>`);
+}
+</script>
+
+</body>
+</html>

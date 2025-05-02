@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Workplace Injury Self-Check</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f2f2f2; }
+    #question-box, #result-box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+    h2 { margin-top: 0; }
+    button { padding: 10px 20px; margin: 1rem 1rem 0 0; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; }
+    .yes { background-color: #4CAF50; color: white; }
+    .no { background-color: #f44336; color: white; }
+    ul { padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+
+<div id="question-box">
+  <h2 id="question">Have you experienced a sudden accident while working?</h2>
+  <button class="yes" onclick="handleAnswer('y')">Yes (Y)</button>
+  <button class="no" onclick="handleAnswer('n')">No (N)</button>
+</div>
+
+<div id="result-box" style="display: none;">
+  <h2>✅ Summary of Results</h2>
+  <h3>🧭 Type of Occupational Injury:</h3>
+  <ul id="stance-list"></ul>
+  <h3>📄 Required Documents:</h3>
+  <ul id="need-list"></ul>
+  <h3>📁 Documents You Already Have:</h3>
+  <ul id="have-list"></ul>
+  <p>📞 If You Need Help:<br>
+    - Please contact a nearby Migrant Workers Center.<br>
+    - <strong>[Call Center for Foreign Workers Supporting Occupational Injury Claims] 1644-1350 (Interpreter service available)</strong></p>
+</div>
+
+<script>
+const result = {
+  "A": "Accident During Work",
+  "B": "Illness Caused by Work",
+  "C": "Not Considered an Occupational Injury",
+  "D": "Currently Working",
+  "E": "Not Currently Working",
+  "F": "Deadline for filing a claim has passed",
+  "G": "Severe injury",
+  "H": "Mild injury",
+  "I": "Treatment Discontinued"
+};
+
+let stance = [], document_need = [], document_have = [];
+let step = 0;
+
+const questions = [
+  { text: "Have you experienced a sudden accident while working?", yes: () => { stance.push(result.A); step = 2; }, no: () => { step = 1; } },
+  { text: "Have you developed pain or worsening symptoms in a specific body part due to repetitive motion or exposure to harmful substances at work?", yes: () => { stance.push(result.B); step = 2; }, no: () => { stance.push(result.C); step = 2; } },
+  { text: "Are you still working at the same company where the accident (or symptoms) occurred?", yes: () => { stance.push(result.D); step = 5; }, no: () => { step = 3; } },
+  { text: "Did you leave the company within the past 3 years?", yes: () => { stance.push(result.E); step = 5; }, no: () => { stance.push(result.F); step = 5; } },
+  { text: "Have you ever been hospitalized or undergone surgery due to the accident or illness?", yes: () => { stance.push(result.G); step = 7; }, no: () => { step = 6; } },
+  { text: "Are you only receiving outpatient treatment?", yes: () => { stance.push(result.H); step = 7; }, no: () => { stance.push(result.I); document_need.push("If you need treatment or examination, go to the hospital immediately. You must receive a diagnosis report in advance to use it as evidence."); step = 10; } },
+  { text: "Have you received a medical certificate or opinion letter for an occupational injury from a doctor?", yes: () => { document_have.push("Medical opinion letter for occupational injury claims"); step++; }, no: () => { document_need.push("It is essential to ask your attending doctor for a 'Medical Opinion Letter for Occupational Injury Claims(업무상 재해 산재 신청용 소견서)'"); step++; } },
+  { text: "Have you obtained copies of your initial treatment records and imaging data (MRI, CT, etc.) from the hospital?", yes: () => { document_have.push("Initial treatment records, imaging data (MRI, CT, etc.)"); step++; }, no: () => { document_need.push("When requesting from the hospital, specify that it is for an occupational injury claim (additional fees may apply)."); step++; } },
+  { text: "Was the accident reported to 119, or have you secured a witness statement from a coworker?", yes: () => { document_have.push("Reports or witness statements from coworkers"); step++; }, no: () => { document_need.push("If possible, ask a coworker to handwrite a statement about the incident.\n- The 119 accident confirmation document can be requested from the fire station.\n- If unavailable, a handwritten incident report can be used as a substitute"); step++; } },
+  { text: "Do you have documents to prove your wages, such as a labor contract, pay stub, or deposit record?", yes: () => { document_have.push("Documents proving wage payment"); step++; }, no: () => { document_need.push("Collect as much proof as possible, such as bank deposit screenshots, messages, or notes."); step++; } },
+  { text: "Is your employer refusing to cooperate with your occupational injury claim or not providing the necessary documents?", yes: () => { document_need.push("You can proceed without the insurer’s opinion letter, but be prepared for investigation by the Labor Welfare Corporation."); showResults(); }, no: () => { document_have.push("It’s best to obtain the employer’s signature if possible."); showResults(); } }
+];
+
+function handleAnswer(answer) {
+  const current = questions[step];
+  if (answer === 'y') current.yes();
+  else current.no();
+  showNextQuestion();
+}
+
+function showNextQuestion() {
+  if (step >= questions.length) return;
+  document.getElementById("question").innerHTML = questions[step].text;
+}
+
+function showResults() {
+  document.getElementById("question-box").style.display = "none";
+  document.getElementById("result-box").style.display = "block";
+
+  const sList = document.getElementById("stance-list");
+  const nList = document.getElementById("need-list");
+  const hList = document.getElementById("have-list");
+
+  stance.forEach(s => sList.innerHTML += `<li>${s}</li>`);
+  document_need.forEach(d => nList.innerHTML += `<li>${d}</li>`);
+  document_have.forEach(h => hList.innerHTML += `<li>${h}</li>`);
+}
+</script>
+
+</body>
+</html>
